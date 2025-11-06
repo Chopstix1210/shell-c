@@ -35,7 +35,7 @@ char *handle_path_search(char *command) {
     if (dp != NULL) {
       while ((ep = readdir(dp)) != NULL) {
         if (strcmp(command, ep->d_name) == 0) {
-          printf("found: %s\n", dirs[i]);
+          // printf("found: %s\n", dirs[i]);
           found = concat(dirs[i], ep->d_name);
           break;
         }
