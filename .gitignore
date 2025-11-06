@@ -53,3 +53,7 @@ dkms.conf
 
 build
 vcpkg_installed
+
+# ide configs 
+.vscode
+.idea
