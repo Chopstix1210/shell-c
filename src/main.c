@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 char *concat(const char *s1, const char *s2) {
   char *concat_string = malloc(strlen(s1) + strlen(s2) + 2);
@@ -12,8 +14,16 @@ char *concat(const char *s1, const char *s2) {
   return concat_string;
 }
 
+bool is_executable(char *exe) {
+  struct stat st;
+  if (stat(exe, &st) != 0) return false;
+  if (!S_ISREG(st.st_mode)) return 0;
+  return access(exe, X_OK) == 0;
+}
+
 char *handle_path_search(char *command) {
-  char *path = getenv("PATH");
+  char *path_env = getenv("PATH");
+  char *path = strdup(path_env);
 
   char *dirs[1024];
   char delimiter[] = ":";
@@ -37,15 +47,16 @@ char *handle_path_search(char *command) {
         if (strcmp(command, ep->d_name) == 0) {
           // printf("found: %s\n", dirs[i]);
           found = concat(dirs[i], ep->d_name);
-          break;
+          if (is_executable(found)) {
+            free(path);
+            return found;
+          }
         }
-      }
-      if (strcmp(found, "\0") != 0) {
-        break;
       }
       (void)closedir(dp);
     }
   }
+  free(path);
   return found;
 }
 
