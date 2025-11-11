@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include "navigation.h"
 
 char *concat(const char *s1, const char *s2) {
   char *concat_string = malloc(strlen(s1) + strlen(s2) + 2);
@@ -133,7 +134,7 @@ int handle_execs(char* exe, char *args) {
 
 int main(void) {
   setbuf(stdout, NULL);
-  char *builtin_commands[] = {"echo", "exit", "type"};
+  char *builtin_commands[] = {"echo", "exit", "type", "pwd"};
 
   while (true) {
     printf("$ ");
@@ -151,6 +152,8 @@ int main(void) {
       handle_exit(args);
     } else if (strcmp(token, "echo") == 0) {
       handle_echo(args);
+    } else if (strcmp(token, "pwd") == 0) {
+      print_working_directory();
     } else if (strcmp(token, "type") == 0) {
       int length = sizeof(builtin_commands) / sizeof(builtin_commands[0]);
       handle_type(args, builtin_commands, length);
