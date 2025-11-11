@@ -134,7 +134,7 @@ int handle_execs(char* exe, char *args) {
 
 int main(void) {
   setbuf(stdout, NULL);
-  char *builtin_commands[] = {"echo", "exit", "type", "pwd"};
+  char *builtin_commands[] = {"echo", "exit", "type", "pwd", "cd"};
 
   while (true) {
     printf("$ ");
@@ -157,7 +157,9 @@ int main(void) {
     } else if (strcmp(token, "type") == 0) {
       int length = sizeof(builtin_commands) / sizeof(builtin_commands[0]);
       handle_type(args, builtin_commands, length);
-    } else {
+    } else if (strcmp(token, "cd") == 0) {
+      change_directory(args);
+    }else {
       char* found = handle_path_search(command);
       if (found != NULL) {
         handle_execs(found, args);
