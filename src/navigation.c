@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <string.h>
 
 #ifndef MAX_BUFFER
 #define MAX_BUFFER 200
@@ -15,9 +16,25 @@ void print_working_directory() {
 }
 
 void change_directory(char* directory) {
-    struct stat sb;
 
-    if (stat(directory, &sb) == 0 && S_ISDIR(sb.st_mode))
+    char home_var = directory ? directory[0] : '\0';
+    printf("This is the first alpha: %c\n", home_var);
+
+    struct stat sb;
+    if (home_var == '~') {
+        if (strlen(directory) == 1) {
+            chdir(getenv("HOME"));
+        } else {
+           printf("not implemented yet\n");
+        }
+    } else if (home_var == '.') {
+       if (directory[1] == '.') {
+           if (chdir("..") != 0) {
+               perror("cd ..");
+           }
+       }
+    }
+    else if (stat(directory, &sb) == 0 && S_ISDIR(sb.st_mode))
     {
         chdir(directory);
     } else {
