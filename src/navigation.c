@@ -18,7 +18,7 @@ void print_working_directory() {
 void change_directory(char* directory) {
 
     char home_var = directory ? directory[0] : '\0';
-    printf("This is the first alpha: %c\n", home_var);
+    // printf("This is the first alpha: %c\n", home_var);
 
     struct stat sb;
     if (home_var == '~') {
@@ -29,9 +29,14 @@ void change_directory(char* directory) {
         }
     } else if (home_var == '.') {
        if (directory[1] == '.') {
-           if (chdir("..") != 0) {
+           if (chdir(directory) != 0) {
                perror("cd ..");
            }
+       } else {
+           char path[MAX_BUFFER];
+           char *goto_directory = strcat(getcwd(path, MAX_BUFFER), directory + 1);
+            // printf("new dir: %s\n", goto_directory);
+           chdir(goto_directory);
        }
     }
     else if (stat(directory, &sb) == 0 && S_ISDIR(sb.st_mode))
